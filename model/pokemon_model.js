@@ -13,40 +13,41 @@ const PokemonModel = sequelize.define(
       allowNull: false,
     },
     image: {
-      type: DataTypes.TEXT,
+      type: DataTypes.BLOB("long"),
       allowNull: false,
     },
     weight: {
       type: DataTypes.DOUBLE,
-      allowNull: false,
+      defaultValue: 0.0,
     },
     height: {
       type: DataTypes.DOUBLE,
-      allowNull: false,
+      defaultValue: 0.0,
     },
     hp: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
+      defaultValue: 0,
     },
     attack: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      defaultValue: 0,
     },
     defense: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      defaultValue: 0,
     },
     specialAttack: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      defaultValue: 0,
     },
     specialDefense: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      defaultValue: 0,
     },
     speed: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      defaultValue: 0,
     },
   },
   { tableName: "pokemons" }

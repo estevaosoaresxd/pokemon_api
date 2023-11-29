@@ -23,19 +23,36 @@ async function validId(req, res, next) {
 }
 
 function verifyAllData(req, res, next) {
-  const { name, quantity, unity, recipeId } = req.body;
+  const {
+    name,
+    type,
+    image,
+    weight,
+    height,
+    hp,
+    attack,
+    defense,
+    specialDefense,
+    specialAttack,
+    speed,
+  } = req.body;
 
   if (
     name != undefined &&
-    quantity != undefined &&
-    unity != undefined &&
-    recipeId != undefined
+    type != undefined &&
+    image != undefined &&
+    weight != undefined &&
+    height != undefined &&
+    hp != undefined &&
+    attack != undefined &&
+    defense != undefined &&
+    specialDefense != undefined &&
+    specialAttack != undefined &&
+    speed != undefined
   ) {
     next();
   } else {
-    res
-      .status(500)
-      .json(fail("Por favor envie todos os dados do ingrediente."));
+    res.status(500).json(fail("Por favor envie todos os dados do pokemon."));
   }
 }
 

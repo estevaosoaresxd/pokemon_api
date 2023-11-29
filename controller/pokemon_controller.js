@@ -6,26 +6,45 @@ const { sucess, fail } = require("../helpers/response");
 
 async function createPokemon(req, res) {
   try {
-    var { name, recipeId, quantity, unity } = req.body;
-
-    quantity = parseInt(quantity);
-
-    if (!unity) {
-      unity = "UN";
-    }
-
-    if (!quantity) {
-      quantity = 0;
-    }
-
-    const ingredient = await PokemonModel.create({
+    let {
       name,
-      quantity,
-      unity,
-      recipeId,
+      type,
+      image,
+      weight,
+      height,
+      hp,
+      attack,
+      defense,
+      specialDefense,
+      specialAttack,
+      speed,
+    } = req.body;
+
+    weight = parseFloat(weight);
+    height = parseFloat(height);
+    hp = parseInt(hp);
+    attack = parseInt(attack);
+    defense = parseInt(defense);
+    specialDefense = parseInt(specialDefense);
+    specialAttack = parseInt(specialAttack);
+    speed = parseInt(speed);
+    image = Buffer.from(image, "base64");
+
+    const pokemon = await PokemonModel.create({
+      name,
+      type,
+      image,
+      weight,
+      height,
+      hp,
+      attack,
+      defense,
+      specialAttack,
+      specialDefense,
+      speed,
     });
 
-    res.status(201).json(sucess(ingredient));
+    res.status(201).json(sucess(pokemon));
   } catch (error) {
     res.status(500).json(fail("Erro ao criar o pokemon"));
   }
@@ -41,7 +60,13 @@ async function getAllPokemons(req, res) {
       offset: page * limit,
     });
 
-    res.json(sucess(pokemons.rows));
+    pokemons.rows.map((e) => {
+      e.image = e.image.toString("base64");
+
+      return e;
+    });
+
+    res.json(sucess({ count: pokemons.count, pokemons: pokemons.rows }));
   } catch (error) {
     res.status(500).json(fail("Erro ao obter os pokemons"));
   }
@@ -49,7 +74,9 @@ async function getAllPokemons(req, res) {
 
 async function getByIdPokemon(req, res) {
   try {
-    const pokemon = req.data;
+    let pokemon = req.data;
+
+    pokemon.image = pokemon.image.toString("base64");
 
     res.json(sucess(pokemon));
   } catch (error) {
@@ -59,7 +86,9 @@ async function getByIdPokemon(req, res) {
 
 async function getByNamePokemon(req, res) {
   try {
-    const pokemon = req.data;
+    let pokemon = req.data;
+
+    pokemon.image.toString("base64");
 
     res.json(sucess(pokemon));
   } catch (error) {
@@ -68,14 +97,46 @@ async function getByNamePokemon(req, res) {
 }
 
 async function updatePokemon(req, res) {
-  const { name, recipeId, quantity, unity } = req.body;
+  let {
+    name,
+    type,
+    image,
+    weight,
+    height,
+    hp,
+    attack,
+    defense,
+    specialDefense,
+    specialAttack,
+    speed,
+  } = req.body;
 
-  quantity = parseInt(quantity);
+  weight = parseFloat(weight);
+  height = parseFloat(height);
+  hp = parseInt(hp);
+  attack = parseInt(attack);
+  defense = parseInt(defense);
+  specialDefense = parseInt(specialDefense);
+  specialAttack = parseInt(specialAttack);
+  speed = parseInt(speed);
+  image = Buffer.from(image, "base64");
 
   try {
     const pokemon = req.data;
 
-    await pokemon.update({ name, quantity, unity, recipeId });
+    await pokemon.update({
+      name,
+      type,
+      image,
+      weight,
+      height,
+      hp,
+      attack,
+      defense,
+      specialDefense,
+      specialAttack,
+      speed,
+    });
 
     res.json({ pokemon });
   } catch (error) {
