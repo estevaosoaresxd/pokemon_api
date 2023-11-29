@@ -1,6 +1,6 @@
 const sequelize = require("../helpers/database");
-
 const UserModel = require("../model/user_model");
+const bcrypt = require("bcrypt");
 
 const { sucess, fail } = require("../helpers/response");
 
@@ -11,7 +11,7 @@ async function install(req, res) {
     // CREATE USER ADMIN
     const user = await UserModel.create({
       username: "admin",
-      password: "admin",
+      password: bcrypt.hashSync("admin", 8),
       isAdmin: true,
     });
 

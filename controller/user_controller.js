@@ -1,9 +1,8 @@
 const { Op } = require("sequelize");
-
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const UserModel = require("../model/user_model");
 const { sucess, fail } = require("../helpers/response");
-
-const jwt = require("jsonwebtoken");
 
 async function authUser(req, res) {
   try {
@@ -17,7 +16,11 @@ async function authUser(req, res) {
       },
     });
 
-    if (user && user.username == username && user.password == password) {
+    if (
+      user &&
+      user.username == username &&
+      bcrypt.compareSync(password, user.password)
+    ) {
       let token = jwt.sign({ user: user }, "#Abcasdfqwr", {
         expiresIn: "50 min",
       });
@@ -61,6 +64,8 @@ async function getByIdUser(req, res) {
 async function createUser(req, res) {
   try {
     const { username, password } = req.body;
+
+    password = bcrypt.hashSync(password, 8);
 
     const user = await UserModel.create({
       username: username,

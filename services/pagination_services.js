@@ -8,11 +8,11 @@ async function setPagination(req, res, next) {
     page = pageInQuery;
   }
 
-  let limit = 10;
+  let limit = 20;
 
   if (
     !Number.isNaN(limitInQuery) &&
-    !(limitInQuery > 10) &&
+    !(limitInQuery > 20) &&
     !(limitInQuery < 1)
   ) {
     limit = limitInQuery;

@@ -8,7 +8,7 @@ const PokemonController = require("../controller/pokemon_controller");
 
 router.get(
   "/",
-  AuthServices.validateToken,
+  // AuthServices.validateToken,
   PaginationServices.setPagination,
   PokemonController.getAllPokemons
 );
