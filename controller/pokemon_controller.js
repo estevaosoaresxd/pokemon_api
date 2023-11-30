@@ -1,8 +1,8 @@
-const { Op } = require("sequelize");
-
 const PokemonModel = require("../model/pokemon_model");
 
 const { sucess, fail } = require("../helpers/response");
+
+const cache = require("../helpers/cache");
 
 async function createPokemon(req, res) {
   try {
@@ -44,6 +44,8 @@ async function createPokemon(req, res) {
       speed,
     });
 
+    await cache.del("getAllPokemons");
+
     res.status(201).json(sucess(pokemon));
   } catch (error) {
     res.status(500).json(fail("Erro ao criar o pokemon"));
@@ -55,6 +57,17 @@ async function getAllPokemons(req, res) {
   var page = req.page;
 
   try {
+    const pokemonsFromCache = await cache.get("getAllPokemons");
+
+    if (pokemonsFromCache) {
+      return res.json(
+        sucess({
+          count: pokemonsFromCache.count,
+          pokemons: pokemonsFromCache.rows,
+        })
+      );
+    }
+
     const pokemons = await PokemonModel.findAndCountAll({
       limit: limit,
       offset: page * limit,
@@ -62,9 +75,10 @@ async function getAllPokemons(req, res) {
 
     pokemons.rows.map((e) => {
       e.image = e.image.toString("base64");
-
       return e;
     });
+
+    await cache.set("getAllPokemons", pokemons, 60 * 5);
 
     res.json(sucess({ count: pokemons.count, pokemons: pokemons.rows }));
   } catch (error) {
@@ -138,6 +152,8 @@ async function updatePokemon(req, res) {
       speed,
     });
 
+    await cache.del("getAllPokemons");
+
     res.json({ pokemon });
   } catch (error) {
     res.status(500).json(fail("Erro ao atualizar o pokemon"));
@@ -149,6 +165,8 @@ async function deletePokemon(req, res) {
     const pokemon = req.data;
 
     await pokemon.destroy();
+
+    await cache.del("getAllPokemons");
 
     res.json(sucess(pokemon));
   } catch (error) {

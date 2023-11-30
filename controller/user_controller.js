@@ -117,7 +117,7 @@ async function updateUserById(req, res) {
     } else {
       await user.update({
         username: username,
-        password: password,
+        password: bcrypt.hashSync(password, 8),
         isAdmin: user.isAdmin,
       });
 
@@ -136,7 +136,7 @@ async function updateUserAdminById(req, res) {
 
     await user.update({
       username: username,
-      password: password,
+      password: bcrypt.hashSync(password, 8),
       isAdmin: isAdmin,
     });
 
