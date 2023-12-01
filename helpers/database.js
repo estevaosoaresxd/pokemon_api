@@ -13,9 +13,7 @@ const sequelize = new Sequelize(
 
 sequelize
   .authenticate()
-  .then(() => console.log("Conectado no Mysql!"))
+  .then(() => sequelize.sync())
   .catch((error) => console.log(error));
-
-sequelize.sync({ force: true });
 
 module.exports = sequelize;

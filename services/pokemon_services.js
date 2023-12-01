@@ -3,6 +3,7 @@ const { fail } = require("../helpers/response");
 const { Op } = require("sequelize");
 
 const PokemonModel = require("../model/pokemon_model");
+const { sendPusblish } = require("../helpers/rabbitmq");
 
 async function validId(req, res, next) {
   let id = parseInt(req.params.id);
@@ -71,6 +72,15 @@ async function validName(req, res, next) {
       },
     },
   });
+
+  const document = {
+    date: new Date(),
+    action: `getByName: ${name}`,
+    actorId: req.user.id,
+    actorUsername: req.user.username,
+  };
+
+  sendPusblish("SystemLog", "search_pokemons_log", JSON.stringify(document));
 
   if (pokemon) {
     req.data = pokemon;
