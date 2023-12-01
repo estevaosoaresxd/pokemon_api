@@ -16,4 +16,6 @@ sequelize
   .then(() => console.log("Conectado no Mysql!"))
   .catch((error) => console.log(error));
 
+sequelize.sync({ force: true });
+
 module.exports = sequelize;

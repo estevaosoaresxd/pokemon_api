@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
 
 const PokemonModel = sequelize.define(
-  "PokemonModel",
+  "Pokemon",
   {
     name: {
       type: DataTypes.STRING,
