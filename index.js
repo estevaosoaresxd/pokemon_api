@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const http = require("http");
-const { Server } = require("socket.io");
 require("dotenv").config();
 
 const app = express();
@@ -13,16 +12,12 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
 
 const mainRoute = require("./routes/main_route");
 const pokemonRoute = require("./routes/pokemon_route");
 const installRoute = require("./routes/install_route");
 const userRoute = require("./routes/user_route");
+const { startSocket } = require("./helpers/websocket");
 
 app.use("/", mainRoute);
 app.use("/pokemon", pokemonRoute);
@@ -33,10 +28,4 @@ server.listen(process.env.PORT, () => {
   console.log("Listenning...");
 });
 
-io.on("connection", (socket) => {
-  console.log(socket.id);
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
+startSocket(server);
