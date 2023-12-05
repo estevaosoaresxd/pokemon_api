@@ -6,6 +6,8 @@ const { addNotificationInList } = require("../helpers/websocket");
 
 const { logger } = require("../helpers/logger");
 
+const cache = require("../helpers/cache");
+
 async function createPokemon(req, res) {
   try {
     let {
@@ -70,10 +72,10 @@ async function createPokemon(req, res) {
 async function getAllPokemons(req, res) {
   var limit = req.limit;
   var page = req.page;
-  const cacheKey = req.originalUrl;
+  const cacheKey = req.originalUrl.split("?");
 
   try {
-    const pokemonsFromCache = await cache.get(cacheKey);
+    const pokemonsFromCache = await cache.get(cacheKey[0]);
 
     if (pokemonsFromCache) {
       return res.json(
@@ -95,7 +97,7 @@ async function getAllPokemons(req, res) {
       return e;
     });
 
-    await cache.set(cacheKey, pokemons, 60 * 5);
+    await cache.set(cacheKey[0], pokemons, 60 * 5);
 
     res.json(sucess({ count: pokemons.count, pokemons: pokemons.rows }));
   } catch (error) {
