@@ -13,6 +13,9 @@ function validateToken(req, res, next) {
 
   jwt.verify(token, "#Abcasdfqwr", (err, payload) => {
     if (err) {
+      const msg = "Acesso negado - Token invalido";
+      logger.log("info", msg);
+
       res.status(401).json(fail("Acesso negado - Token invalido"));
       return;
     }

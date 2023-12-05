@@ -56,7 +56,11 @@ async function createPokemon(req, res) {
 
     res.status(201).json(sucess(pokemon));
   } catch (error) {
-    res.status(500).json(fail("Erro ao criar o pokemon"));
+    const msg = "Erro ao criar o pokemon";
+
+    logger.log("error", msg);
+
+    res.status(500).json(fail(msg));
   }
 }
 
@@ -91,7 +95,11 @@ async function getAllPokemons(req, res) {
 
     res.json(sucess({ count: pokemons.count, pokemons: pokemons.rows }));
   } catch (error) {
-    res.status(500).json(fail("Erro ao obter os pokemons"));
+    const msg = "Erro ao obter os pokemons";
+
+    logger.log("error", msg);
+
+    res.status(500).json(fail(msg));
   }
 }
 
@@ -103,7 +111,11 @@ async function getByIdPokemon(req, res) {
 
     res.json(sucess(pokemon));
   } catch (error) {
-    res.status(500).json(fail("Não foi possível localizar o pokemon."));
+    const msg = "Não foi possível localizar o pokemon.";
+
+    logger.log("error", msg);
+
+    res.status(500).json(fail(msg));
   }
 }
 
@@ -115,6 +127,10 @@ async function getByNamePokemon(req, res) {
 
     res.json(sucess(pokemon));
   } catch (error) {
+    const msg = "Não foi possível localizar o pokemon.";
+
+    logger.log("error", msg);
+
     res.status(500).json(fail("Não foi possível localizar o pokemon."));
   }
 }

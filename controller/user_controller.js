@@ -34,10 +34,18 @@ async function authUser(req, res) {
         })
       );
     } else {
-      res.status(404).json(fail("Usuário ou senha inválido."));
+      const msg = "Usuário ou senha inválido.";
+
+      logger.log("info", msg);
+
+      res.status(404).json(fail(msg));
     }
   } catch (error) {
-    res.status(404).json(fail("Usuário ou senha inválido."));
+    const msg = "Usuário ou senha inválido.";
+
+    logger.log("info", msg);
+
+    res.status(404).json(fail(msg));
   }
 }
 
@@ -47,7 +55,11 @@ async function getByUsername(req, res) {
 
     res.status(201).json(sucess(user));
   } catch (error) {
-    res.status(500).json(fail("Usuário não encontrado."));
+    const msg = "Usuário não encontrado.";
+
+    logger.log("info", msg);
+
+    res.status(500).json(fail(msg));
   }
 }
 
@@ -57,7 +69,11 @@ async function getByIdUser(req, res) {
 
     res.status(201).json(sucess(user));
   } catch (error) {
-    res.status(500).json(fail("Usuário não encontrado."));
+    const msg = "Usuário não encontrado.";
+
+    logger.log("info", msg);
+
+    res.status(500).json(fail(msg));
   }
 }
 
@@ -75,7 +91,11 @@ async function createUser(req, res) {
 
     res.status(201).json(sucess(user));
   } catch (error) {
-    res.status(500).json(fail("Erro ao criar usuário."));
+    const msg = "Erro ao criar usuário.";
+
+    logger.log("error", msg);
+
+    res.status(500).json(fail(msg));
   }
 }
 
@@ -91,7 +111,11 @@ async function createUserAdmin(req, res) {
 
     res.status(201).json(sucess(user));
   } catch (error) {
-    res.status(500).json(fail("Erro ao criar usuário."));
+    const msg = "Erro ao criar usuário.";
+
+    logger.log("error", msg);
+
+    res.status(500).json(fail(msg));
   }
 }
 
