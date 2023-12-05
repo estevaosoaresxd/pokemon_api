@@ -1,7 +1,7 @@
 const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 
-const notifications = [];
+let notifications = [];
 
 const startSocket = (server) => {
   const io = new Server(server, {
@@ -51,7 +51,7 @@ const startSocket = (server) => {
               }
 
               if (haveDataAndNotIsUser || !haveData) {
-                socket.emit("notification", {
+                socket.send({
                   message: notification.message,
                   date: notification.date.toISOString(),
                 });
@@ -67,7 +67,7 @@ const startSocket = (server) => {
     };
 
     const verifyAllUsersSended = (notification, indexNotification) => {
-      const notSended = [];
+      let notSended = [];
 
       io.sockets.sockets.forEach((socket) => {
         const hasSocketIdOrNot =
@@ -81,6 +81,17 @@ const startSocket = (server) => {
           notSended.push(socket);
         }
       });
+
+      if (notSended.length > 0) {
+        let newArray = notSended.filter((socket) => {
+          return (
+            Object.keys(socket.data).length === 0 ||
+            socket.data.username !== notification.username
+          );
+        });
+
+        notSended = newArray;
+      }
 
       if (notSended.length == 0) {
         notifications.splice(indexNotification, 1);
