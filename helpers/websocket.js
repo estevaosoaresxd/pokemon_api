@@ -40,10 +40,17 @@ const startSocket = (server) => {
             const includes = notification.usersListened.includes(socket.id);
 
             if (!includes) {
-              if (
-                (haveData && notification.username !== socket.data.username) ||
-                !haveData
-              ) {
+              const haveDataAndNotIsUser =
+                haveData && notification.username !== socket.data.username;
+
+              const haveDataAndIsUser =
+                haveData && notification.username == socket.data.username;
+
+              if (haveDataAndIsUser && !notification.socketId) {
+                notification.socketId = socket.id;
+              }
+
+              if (haveDataAndNotIsUser || !haveData) {
                 socket.emit("notification", {
                   message: notification.message,
                   date: notification.date.toISOString(),
@@ -63,7 +70,14 @@ const startSocket = (server) => {
       const notSended = [];
 
       io.sockets.sockets.forEach((socket) => {
-        if (!notification.usersListened.includes(socket.id)) {
+        const hasSocketIdOrNot =
+          !notification.socketId ||
+          (notification.socketId && notification.socketId != socket.id);
+
+        if (
+          !notification.usersListened.includes(socket.id) &&
+          hasSocketIdOrNot
+        ) {
           notSended.push(socket);
         }
       });
