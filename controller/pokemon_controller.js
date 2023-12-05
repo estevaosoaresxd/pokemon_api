@@ -30,7 +30,11 @@ async function createPokemon(req, res) {
     specialDefense = parseInt(specialDefense);
     specialAttack = parseInt(specialAttack);
     speed = parseInt(speed);
-    image = Buffer.from(image, "base64");
+    image = await fetch(image).then(async (response) => {
+      let myBlobImg = await response.blob();
+
+      return Buffer.from(await myBlobImg.arrayBuffer());
+    });
 
     const pokemon = await PokemonModel.create({
       name,
@@ -72,14 +76,14 @@ async function getAllPokemons(req, res) {
   try {
     const pokemonsFromCache = await cache.get("getAllPokemons");
 
-    // if (pokemonsFromCache) {
-    //   return res.json(
-    //     sucess({
-    //       count: pokemonsFromCache.count,
-    //       pokemons: pokemonsFromCache.rows,
-    //     })
-    //   );
-    // }
+    if (pokemonsFromCache) {
+      return res.json(
+        sucess({
+          count: pokemonsFromCache.count,
+          pokemons: pokemonsFromCache.rows,
+        })
+      );
+    }
 
     const pokemons = await PokemonModel.findAndCountAll({
       limit: limit,
@@ -87,8 +91,8 @@ async function getAllPokemons(req, res) {
     });
 
     pokemons.rows.map((e) => {
-      // e.image = e.image.toString("base64");
-      e.image = "";
+      let imgBase64 = Buffer.from(e.image).toString("base64");
+      e.image = `data:image/jpeg;base64,${imgBase64}`;
       return e;
     });
 
