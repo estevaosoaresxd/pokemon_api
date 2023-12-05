@@ -54,7 +54,7 @@ async function createPokemon(req, res) {
 
     addNotificationInList({
       username: req.user.username,
-      message: `Uma nova fruta foi inserida por: ${req.user.username}`,
+      message: `Um novo pokémon ${name} foi inserido por: ${req.user.username}`,
       usersListened: [],
       date: new Date(),
     });
