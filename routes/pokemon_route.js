@@ -5,6 +5,7 @@ const AuthServices = require("../services/auth_services");
 const PaginationServices = require("../services/pagination_services");
 const PokemonServices = require("../services/pokemon_services");
 const PokemonController = require("../controller/pokemon_controller");
+const RedisServices = require("../services/redis_services");
 
 router.get(
   "/",
@@ -31,6 +32,7 @@ router.post(
   "/",
   AuthServices.validateToken,
   PokemonServices.verifyAllData,
+  RedisServices.invalidateCache,
   PokemonController.createPokemon
 );
 
@@ -39,6 +41,7 @@ router.put(
   AuthServices.validateToken,
   PokemonServices.validId,
   PokemonServices.verifyAllData,
+  RedisServices.invalidateCache,
   PokemonController.updatePokemon
 );
 
@@ -46,6 +49,7 @@ router.delete(
   "/:id",
   AuthServices.validateToken,
   PokemonServices.validId,
+  RedisServices.invalidateCache,
   PokemonController.deletePokemon
 );
 

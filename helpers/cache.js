@@ -19,8 +19,8 @@ class cache {
     return this.redis.set(key, JSON.stringify(value), "EX", timeExp);
   }
 
-  del(key) {
-    return this.redis.del(key);
+  del(key, cb) {
+    return this.redis.del(key, cb);
   }
 
   async delPrefix(prefix) {

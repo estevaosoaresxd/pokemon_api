@@ -1,8 +1,8 @@
 const PokemonModel = require("../model/pokemon_model");
 
 const { sucess, fail } = require("../helpers/response");
+
 const { addNotificationInList } = require("../helpers/websocket");
-const cache = require("../helpers/cache");
 
 const { logger } = require("../helpers/logger");
 
@@ -50,8 +50,6 @@ async function createPokemon(req, res) {
       speed,
     });
 
-    await cache.del("getAllPokemons");
-
     addNotificationInList({
       username: req.user.username,
       message: `Uma nova fruta foi inserida por: ${req.user.username}`,
@@ -72,9 +70,10 @@ async function createPokemon(req, res) {
 async function getAllPokemons(req, res) {
   var limit = req.limit;
   var page = req.page;
+  const cacheKey = req.originalUrl;
 
   try {
-    const pokemonsFromCache = await cache.get("getAllPokemons");
+    const pokemonsFromCache = await cache.get(cacheKey);
 
     if (pokemonsFromCache) {
       return res.json(
@@ -96,7 +95,7 @@ async function getAllPokemons(req, res) {
       return e;
     });
 
-    await cache.set("getAllPokemons", pokemons, 60 * 5);
+    await cache.set(cacheKey, pokemons, 60 * 5);
 
     res.json(sucess({ count: pokemons.count, pokemons: pokemons.rows }));
   } catch (error) {
@@ -182,8 +181,6 @@ async function updatePokemon(req, res) {
       speed,
     });
 
-    await cache.del("getAllPokemons");
-
     res.json({ pokemon });
   } catch (error) {
     res.status(500).json(fail("Erro ao atualizar o pokemon"));
@@ -195,8 +192,6 @@ async function deletePokemon(req, res) {
     const pokemon = req.data;
 
     await pokemon.destroy();
-
-    await cache.del("getAllPokemons");
 
     res.json(sucess(pokemon));
   } catch (error) {
