@@ -5,6 +5,7 @@ const { fail } = require("../helpers/response");
 const { Op } = require("sequelize");
 
 const UserModel = require("../model/user_model");
+const { logger } = require("../helpers/logger");
 
 function validateToken(req, res, next) {
   let token_full = req.headers["authorization"];

@@ -1,9 +1,10 @@
 const PokemonModel = require("../model/pokemon_model");
 
 const { sucess, fail } = require("../helpers/response");
-
-const cache = require("../helpers/cache");
 const { addNotificationInList } = require("../helpers/websocket");
+const cache = require("../helpers/cache");
+
+const { logger } = require("../helpers/logger");
 
 async function createPokemon(req, res) {
   try {

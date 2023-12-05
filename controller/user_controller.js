@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const UserModel = require("../model/user_model");
 const { sucess, fail } = require("../helpers/response");
+const { logger } = require("../helpers/logger");
 
 async function authUser(req, res) {
   try {

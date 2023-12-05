@@ -1,5 +1,6 @@
 const rabbitMQ = require("amqplib/callback_api");
 const ON_DEATH = require("death");
+const { logger } = require("./logger");
 
 const sendPusblish = (exchange, routerKey, msgPayload) => {
   rabbitMQ.connect(process.env.RABBIT_MQ_URL, (connectError, connection) => {
