@@ -3,6 +3,7 @@ const PokemonModel = require("../model/pokemon_model");
 const { sucess, fail } = require("../helpers/response");
 
 const cache = require("../helpers/cache");
+const { addNotificationInList } = require("../helpers/websocket");
 
 async function createPokemon(req, res) {
   try {
@@ -45,6 +46,11 @@ async function createPokemon(req, res) {
     });
 
     await cache.del("getAllPokemons");
+
+    addNotificationInList({
+      user: req.user.username,
+      message: `Uma nova fruta foi inserida por: ${req.user.username}`,
+    });
 
     res.status(201).json(sucess(pokemon));
   } catch (error) {

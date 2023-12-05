@@ -22,14 +22,14 @@ async function authUser(req, res) {
       bcrypt.compareSync(password, user.password)
     ) {
       let token = jwt.sign({ user: user }, "#Abcasdfqwr", {
-        expiresIn: "50 min",
+        expiresIn: "7d",
       });
       res.status(201).json(
         sucess({
           token,
           user: {
             username,
-            password,
+            password: user.password,
           },
         })
       );

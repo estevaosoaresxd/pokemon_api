@@ -16,6 +16,7 @@ function validateToken(req, res, next) {
       res.status(401).json(fail("Acesso negado - Token invalido"));
       return;
     }
+
     req.user = payload.user;
     next();
   });
