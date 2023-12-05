@@ -1,12 +1,18 @@
 const { createLogger, transports, format } = require("winston");
+const { combine, timestamp, json } = format;
 
 const logger = createLogger({
-  level: "info",
-  format: format.json(),
-  defaultMeta: { service: "user-service" },
   transports: [
-    new transports.File({ filename: "logger.log" }),
-    new transports.File({ filename: "error.log", level: "error" }),
+    new transports.File({
+      filename: "logger.log",
+      level: "info",
+      format: combine(timestamp(), json()),
+    }),
+    new transports.File({
+      filename: "error.log",
+      level: "error",
+      format: combine(timestamp(), json()),
+    }),
   ],
 });
 
