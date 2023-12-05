@@ -48,8 +48,10 @@ async function createPokemon(req, res) {
     await cache.del("getAllPokemons");
 
     addNotificationInList({
-      user: req.user.username,
+      username: req.user.username,
       message: `Uma nova fruta foi inserida por: ${req.user.username}`,
+      usersListened: [],
+      date: new Date(),
     });
 
     res.status(201).json(sucess(pokemon));
@@ -65,14 +67,14 @@ async function getAllPokemons(req, res) {
   try {
     const pokemonsFromCache = await cache.get("getAllPokemons");
 
-    if (pokemonsFromCache) {
-      return res.json(
-        sucess({
-          count: pokemonsFromCache.count,
-          pokemons: pokemonsFromCache.rows,
-        })
-      );
-    }
+    // if (pokemonsFromCache) {
+    //   return res.json(
+    //     sucess({
+    //       count: pokemonsFromCache.count,
+    //       pokemons: pokemonsFromCache.rows,
+    //     })
+    //   );
+    // }
 
     const pokemons = await PokemonModel.findAndCountAll({
       limit: limit,
@@ -80,7 +82,8 @@ async function getAllPokemons(req, res) {
     });
 
     pokemons.rows.map((e) => {
-      e.image = e.image.toString("base64");
+      // e.image = e.image.toString("base64");
+      e.image = "";
       return e;
     });
 

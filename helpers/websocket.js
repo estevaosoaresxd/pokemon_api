@@ -1,8 +1,6 @@
 const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 
-const { validateToken } = require("../services/auth_services");
-
 const notifications = [];
 
 const startSocket = (server) => {
@@ -33,16 +31,55 @@ const startSocket = (server) => {
 
     next();
   }).on("connection", (socket) => {
-    console.log(socket.data);
-    socket.on("disconnect", () => {});
-  });
-};
+    const sendNotificationToAll = () => {
+      io.sockets.sockets.forEach((socket) => {
+        const haveData = Object.keys(socket.data).length > 0;
 
-const sendNotificationToAll = (ownerId) => {
-  totalConnect.forEach((socket) => {
-    if (socket.id != ownerId) {
-      socket.emit("notification");
-    }
+        if (notifications.length > 0) {
+          notifications.forEach((notification, i) => {
+            const includes = notification.usersListened.includes(socket.id);
+
+            if (!includes) {
+              if (
+                (haveData && notification.username !== socket.data.username) ||
+                !haveData
+              ) {
+                socket.emit("notification", {
+                  message: notification.message,
+                  date: notification.date.toISOString(),
+                });
+
+                notification.usersListened.push(socket.id);
+              }
+            }
+
+            verifyAllUsersSended(notification, i);
+          });
+        }
+      });
+    };
+
+    const verifyAllUsersSended = (notification, indexNotification) => {
+      const notSended = [];
+
+      io.sockets.sockets.forEach((socket) => {
+        if (!notification.usersListened.includes(socket.id)) {
+          notSended.push(socket);
+        }
+      });
+
+      if (notSended.length == 0) {
+        notifications.splice(indexNotification, 1);
+      }
+    };
+
+    const verifyPerPeriod = setInterval(function verify() {
+      sendNotificationToAll();
+    }, 5000);
+
+    socket.on("disconnect", () => {
+      clearInterval(verifyPerPeriod);
+    });
   });
 };
 
@@ -52,6 +89,5 @@ const addNotificationInList = (notification) => {
 
 module.exports = {
   startSocket,
-  sendNotificationToAll,
   addNotificationInList,
 };
